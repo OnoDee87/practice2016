@@ -1,0 +1,68 @@
+Практика
+
+Настраиваем окружение (Ubuntu)
+
+Устанавливаем Ansible sudo apt-get install ansible -y
+Скачиваем "playbook" для настройки окружения wget http://autoschool.github.io/files/install-appium-environment.yml
+Выполняем "playbook" ansible-playbook -i "127.0.0.1," install-appium-environment.yml -k -K
+Перезаходим в систему, чтобы обновились значения глобальных переменных системы
+Устанавливаем Appium npm i appium@1.4.16, появится каталог node_modules
+Проверяем корректность устрановки node node_modules/appium/bin/appium-doctor.js --android
+Запускаем сервер node node_modules/appium/bin/appium.js
+В соседней вкладке выполняем android avd и запускаем эмулятор
+Настраиваем окружение (Windows)
+
+Скачиваем и устанавливаем Android SDK
+Установить Intel HAXM
+Открываем Android SDK Manager, нажимаем Deselect All и выбираем "Android SDK Tools", "Android SDK Platform-tools" и "Android SDK Build-tools"; Android 4.4.2 (API19): Intel x86 Atom System Image, ARM EABI v7a System Image, SDK Platform; Extras: Intel x86 Emulator Accelerator
+В пункте меню Tools выбираем AVD Manager и создаем с помощью него новое устройство (Nexus 4, No skin). Если в пункте 2 HAXM успешно установился, то создаем и запускаем эмулятор с архитектурой x86, иначе arm
+Скачиваем и запускаем Appium (необходим .NET Framework 4.5)
+Работаем с инспектором интерфейса приложения (Ubuntu)
+
+Скачиваем тестируемое приложение wget http://autoschool.github.io/files/ya-metro.apk
+Устанавливаем приложение на эмулятор adb install ya-metro.apk
+Запускаем приложения Яндекс.Метро на эмуляторе
+Запускаем инспектор uiautomatorviewer и нажимаем в интерфейсе на кнопку "Device Screenshot"
+Изучаем атрибуты элементов (нам пригодятся class и resource-id)
+Работаем с инспектором интерфейса приложения (Windows)
+
+Скачиваем тестируемое приложение
+В интерфейсе Appium кликаем на иконку с роботом ставим галку в чекбоксе Application Path и выбираем скаченное приложение
+На том же экране настроек прописываем путь SDK Path: C:\Users\username\AppData\Local\Android\android-sdk (или тот что указали при установке)
+Прописываем любое значение в поле Device name
+Кликаем по иконке с изображением человека и в Custom Server Flags прописываем --command-timeout "20000"
+Нажимаем на кнопку запуска и следом на кнопку с "Лупой"
+Изучаем атрибуты элементов (нам пригодятся class и resource-id)
+Дорабатываем имеющийся репозиторий
+
+Работаем с репозиторием practice2016
+
+Создаем новую ветку
+В steps-module, рядом с ru.qatools.school.rules.WebDriverRule создаем подобное правило ru.qatools.school.rules.MobileDriverRule,
+в котором driver будет инициализироваться следующим образом:
+DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+desiredCapabilities.setCapability("platformName", "Android");
+desiredCapabilities.setCapability("deviceName", "Android");
+desiredCapabilities.setCapability("app", "http://autoschool.github.io/files/ya-metro.apk");
+desiredCapabilities.setCapability("appWaitActivity", "ru.yandex.metro.MainActivity");
+driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), desiredCapabilities);
+В steps-module cоздаем пакет ru.qatools.school.screens, аналогичный ru.qatools.school.pages. В нем будут описания двух экранов приложения: MainScreen.java и SelectStationScreen.java
+В steps-module в пакете ru.qatools.school.steps необходимо создать каталог mobilesteps, в котором будет содержаться класс с описанием степов для работы с приложением
+В commons-module создаем пакет ru.qatools.school.mobiletests, в котором будет располагаться класс с тестом
+Пишем тест
+
+Не забудьте про новое правило MobileDriverRule, а для поиска элементов экрана используйте селекторы className и id. Для того чтобы тест запустился у вас должен быть запущен сервер Appium и подключен телефон или эмулятор.
+
+Сценарий.
+
+1. Тапаем по полю ввода начальной станции
+2. В поле поиска станции вводим текст "Arbatskaya"
+3. Тапаем по первому результату поиска
+4. Тапаем по полю ввода конечно станции
+5. В поле поиска станции вводим текст "Borisovo"
+6. Тапаем по первому результату поиска
+7. Проверяем, что время в пути превышает 10 минут
+Сохраняем
+
+Закоммитить и запушить все это дело в GitHub
+Создать пулл-реквест в основной репозиторий из интерфейса GitHub
